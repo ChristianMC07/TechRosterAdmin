@@ -1,11 +1,15 @@
 import { Technology, Course } from "./../tools/data.model";
 import { getAllData } from "../tools/DataManager";
 import { NextRouter, useRouter } from "next/router";
+import { useState, useEffect } from "react";
 
 export default function Add({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
     const router: NextRouter = useRouter();
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
+
+    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
+
 
     let techName: string = "";
     let techDesc: string = "";
@@ -19,6 +23,23 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         techDesc = e.target.value;
         console.log(techDesc);
     }
+
+    const onCourseChange = (code: string, name: string) => {
+        const isSelected = selectedCourses.some(course => course.code === code);
+
+        //remove if it is now unchecked
+        if (isSelected) {
+            setSelectedCourses(selectedCourses.filter(course => course.code !== code));
+            //... shorthand for push
+        } else {
+            setSelectedCourses([...selectedCourses, { code, name }]);
+        }
+    };
+
+
+    useEffect(() => {
+        console.log(selectedCourses);
+    }, [selectedCourses])
 
 
 
@@ -52,7 +73,12 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                             <label className="block text-sm font-medium text-gray-600">Used in courses</label>
                             {courses.map((course, index) => (
                                 <div key={index} className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />
+                                    <input
+                                        type="checkbox"
+                                        className="mr-2"
+                                        checked={selectedCourses.some(selectedCourse => selectedCourse.code === course.code)}
+                                        onChange={() => onCourseChange(course.code, course.name)}
+                                    />
                                     <span>{course.code} {course.name}</span>
                                 </div>
                             ))}
