@@ -9,22 +9,25 @@ export default function Home({ technologies, courses }: { technologies: Technolo
 
   const [techs, setTechs] = useState<Technology[]>(technologies);
   const [updCourses, setUpdCourses] = useState<Course[]>(courses);
-  const [identifier, setIdentifier] = useState<number | undefined>(undefined);
+  const [identifier, setIdentifier] = useState<string | undefined>(undefined);
 
   const router: NextRouter = useRouter();
 
   const addNewTech = (e: any) => {
-    setIdentifier(0);
+    setIdentifier("tech");
 
   }
 
   const addNewCourse = (e: any) => {
-    setIdentifier(1);
+    setIdentifier("course");
   }
 
   useEffect(() => {
     if (identifier !== undefined) {
-      router.push("/add");
+      router.push({
+        pathname: "/add",
+        query: { identifier: identifier },
+      });
     }
   }, [identifier])
 
