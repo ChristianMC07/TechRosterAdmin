@@ -8,21 +8,22 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
 
+    //state variables
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
+    const [enableOk, setEnableOk] = useState<boolean>(false);
+    const [techName, setTechName] = useState<string>("");
+    const [techDesc, setTechDesc] = useState<string>("");
+    const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
 
 
-
-    let techName: string = "";
-    let techDesc: string = "";
-    let techDiff: string = "";
 
     const onNameChange = (e: any) => {
-        techName = e.target.value;
+        setTechName(e.target.value);
         console.log(techName);
     }
 
     const onDescriptionChange = (e: any) => {
-        techDesc = e.target.value;
+        setTechDesc(e.target.value);
         console.log(techDesc);
     }
 
@@ -44,9 +45,19 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     }, [selectedCourses])
 
     const onDiffChange = (e: any) => {
-        techDiff = e.target.value;
+        setTechDiff(e.target.value);
         console.log(techDiff);
     }
+
+    useEffect(() => {
+        techDesc.length && techName.length ? setEnableOk(true) : setEnableOk(false);
+
+    }, [techDesc, techName])
+
+    useEffect(() => {
+        console.log(techDiff);
+
+    }, [techDiff])
 
 
 
@@ -94,7 +105,10 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                             ))}
                         </div>
                         <div className="flex gap-10 mt-10">
-                            <input type="button" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800" value="Ok" />
+                            <input
+                                type="button"
+                                className={` text-white px-4 py-2 roundedfocus:outline-none  ${enableOk ? "bg-blue-500 hover:bg-blue-700 focus:shadow-outline-blue active:bg-blue-800 cursor-pointer" : "pointer-events-none bg-gray-500"}`}
+                                value="Ok" />
                             <input type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800" value="Cancel" onClick={() => router.replace("/")} />
                         </div>
                     </form>
