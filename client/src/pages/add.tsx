@@ -11,8 +11,10 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
 
 
+
     let techName: string = "";
     let techDesc: string = "";
+    let techDiff: string = "";
 
     const onNameChange = (e: any) => {
         techName = e.target.value;
@@ -41,6 +43,11 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         console.log(selectedCourses);
     }, [selectedCourses])
 
+    const onDiffChange = (e: any) => {
+        techDiff = e.target.value;
+        console.log(techDiff);
+    }
+
 
 
 
@@ -61,7 +68,10 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Difficulty</label>
-                            <select className="w-full border rounded px-3 py-2">
+                            <select
+                                className="w-full border rounded px-3 py-2"
+                                onChange={onDiffChange}
+                                defaultValue={difficultyArray[0]}>
                                 {difficultyArray.map((difficulty, index) => (
                                     <option key={index} value={difficulty}>
                                         {difficulty}
