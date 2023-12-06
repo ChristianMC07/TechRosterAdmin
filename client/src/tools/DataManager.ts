@@ -23,12 +23,12 @@ export async function getAllData() {
         // get JSON data from mongoDB server (ASYNC task)
         techArray = await mongoClient.db(MONGO_DB_NAME).collection<Technology>(MONGO_COLLECTION_TECHS).find().toArray();
         // need to convert ObjectId objects to strings
-        techArray.forEach((tech: Technology) => tech._id = tech._id.toString());
+        techArray.forEach((tech: Technology) => tech._id = tech._id!.toString());
 
         allArray.push(techArray);
 
         courseArray = await mongoClient.db(MONGO_DB_NAME).collection<Course>(MONGO_COLLECTION_COURSES).find().toArray();
-        courseArray.forEach((course: Course) => course._id = course._id?.toString());
+        courseArray.forEach((course: Course) => course._id = course._id!.toString());
 
         allArray.push(courseArray);
 
