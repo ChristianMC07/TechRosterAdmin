@@ -7,6 +7,21 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
 
+    let techName: string = "";
+    let techDesc: string = "";
+
+    const onNameChange = (e: any) => {
+        techName = e.target.value;
+        console.log(techName);
+    }
+
+    const onDescriptionChange = (e: any) => {
+        techDesc = e.target.value;
+        console.log(techDesc);
+    }
+
+
+
 
 
     return (
@@ -17,11 +32,11 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
-                            <input className="w-full border rounded px-3 py-2" />
+                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Description</label>
-                            <textarea className="w-full border rounded px-3 py-2"></textarea>
+                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></textarea>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Difficulty</label>
