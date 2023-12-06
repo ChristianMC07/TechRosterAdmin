@@ -6,10 +6,6 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    colors: {
-      "accent": "#a72f57",
-      "greyed-out": "#C0C0C0" 
-    }    
   },
   plugins: [],
 }
