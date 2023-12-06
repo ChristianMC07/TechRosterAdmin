@@ -1,11 +1,14 @@
 import { Technology, Course } from "./../tools/data.model";
 import { getAllData } from "../tools/DataManager";
 import { useEffect, useState } from "react";
+import { NextRouter, useRouter } from "next/router";
 
 export default function Home({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
 
   const [techs, setTechs] = useState<Technology[]>(technologies);
   const [updCourses, setUpdCourses] = useState<Course[]>(courses);
+
+  const router: NextRouter = useRouter();
 
 
   return (
