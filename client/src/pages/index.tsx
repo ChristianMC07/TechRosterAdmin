@@ -9,21 +9,16 @@ export default function Home({ technologies, courses }: { technologies: Technolo
 
 
   return (
-    // <div className="font-bold text-sm p-4">
-    //   <pre>
-    //     {JSON.stringify(technologies, null, "\t")}
-    //   </pre>
-    // </div>
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap justify-evenly">
       <div>
         {techs.map((technoogy: Technology, n: number) =>
-          <div key={n}>{technoogy.name}</div>
+          <div key={n} className="my-4">{technoogy.name}</div>
         )}
 
       </div>
       <div>
         {updCourses.map((course: Course, n: number) =>
-          <div key={n}>{course.name}</div>
+          <div key={n} className="my-4">{course.name}</div>
         )}
 
       </div>
