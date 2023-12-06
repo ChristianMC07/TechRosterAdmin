@@ -2,7 +2,7 @@ import { Technology, Course } from "./../tools/data.model";
 import { getAllData } from "../tools/DataManager";
 import { NextRouter, useRouter } from "next/router";
 
-export default function Home({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
+export default function Add({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
     const router: NextRouter = useRouter();
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
@@ -43,15 +43,8 @@ export default function Home({ technologies, courses }: { technologies: Technolo
                             ))}
                         </div>
                         <div className="flex gap-10 mt-10">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
-                                Ok
-                            </button>
-                            <button
-                                onClick={() => router.push("/")}
-                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800"
-                            >
-                                Cancel
-                            </button>
+                            <input type="button" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800" value="Ok" />
+                            <input type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800" value="Cancel" onClick={() => router.replace("/")} />
                         </div>
                     </form>
                 </div>
