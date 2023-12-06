@@ -3,7 +3,7 @@ import { getAllData } from "../tools/DataManager";
 import { useEffect, useState } from "react";
 import { NextRouter, useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 
 export default function Home({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
 
@@ -16,6 +16,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
   return (
     <div className="flex flex-wrap justify-around">
       <div>
+        <FontAwesomeIcon icon={faSquarePlus} className="text-xl" />
         {techs.map((technoogy: Technology, n: number) =>
           <div className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faPenToSquare} onClick={() => router.push("/add")} className="cursor-pointer" />
@@ -26,6 +27,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
 
       </div>
       <div>
+        <FontAwesomeIcon icon={faSquarePlus} className="text-xl" />
         {updCourses.map((course: Course, n: number) =>
           <div className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faPenToSquare} onClick={() => router.push("/add")} className="cursor-pointer" />
