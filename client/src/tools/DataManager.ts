@@ -23,12 +23,12 @@ export async function getAllData() {
         // get JSON data from mongoDB server (ASYNC task)
         techArray = await mongoClient.db(MONGO_DB_NAME).collection<Technology>(MONGO_COLLECTION_TECHS).find().toArray();
         // need to convert ObjectId objects to strings
-        techArray.forEach((tech: Technology) => tech._id = tech._id.toString());
+        techArray.forEach((tech: Technology) => tech._id = tech._id!.toString());
 
         allArray.push(techArray);
 
         courseArray = await mongoClient.db(MONGO_DB_NAME).collection<Course>(MONGO_COLLECTION_COURSES).find().toArray();
-        courseArray.forEach((course: Course) => course._id = course._id?.toString());
+        courseArray.forEach((course: Course) => course._id = course._id!.toString());
 
         allArray.push(courseArray);
 
@@ -47,18 +47,30 @@ export async function createTechnology(request: NextApiRequest, response: NextAp
     let mongoClient: MongoClient = new MongoClient(MONGO_URL);
     try {
         await mongoClient.connect();
+        let result: InsertOneResult;
 
-        // sanitizing input
-        request.body.name = sanitizeHtml(request.body.name);
-        request.body.description = sanitizeHtml(request.body.description);
-        request.body.difficulty = sanitizeHtml(request.body.difficulty);
-        request.body.courses.forEach((course: Course) => {
-            course.code = sanitizeHtml(course.code);
-            course.name = sanitizeHtml(course.name);
-        });
+        if ("courses" in request.body) {
 
-        // insert new document into DB
-        let result: InsertOneResult = await mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS).insertOne(request.body);
+            // sanitizing input
+            request.body.name = sanitizeHtml(request.body.name);
+            request.body.description = sanitizeHtml(request.body.description);
+            request.body.difficulty = sanitizeHtml(request.body.difficulty);
+            request.body.courses.forEach((course: Course) => {
+                course.code = sanitizeHtml(course.code);
+                course.name = sanitizeHtml(course.name);
+            });
+
+            // insert new document into DB
+            result = await mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS).insertOne(request.body);
+        } else {
+            // sanitizing input
+            request.body.code = sanitizeHtml(request.body.code);
+            request.body.name = sanitizeHtml(request.body.name);
+
+            // insert new document into DB
+            result = await mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_COURSES).insertOne(request.body);
+        }
+
 
         // status code for created
         response.status(200);

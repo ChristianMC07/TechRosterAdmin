@@ -1,5 +1,5 @@
 export interface Technology {
-    _id: string;
+    _id?: string;
     name: string;
     description: string;
     difficulty: number;
