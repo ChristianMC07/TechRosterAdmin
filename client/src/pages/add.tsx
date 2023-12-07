@@ -10,6 +10,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const router: NextRouter = useRouter();
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
+    const coursesCodes: string[] = getCoursesCodes();
 
     //state variables for technology
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
@@ -17,6 +18,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const [fieldName, setfieldName] = useState<string>("");
     const [fieldDesc, setfieldDesc] = useState<string>("");
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
+    const [warning, setWarning] = useState<boolean>(false);
 
     //state variables for course
 
@@ -53,9 +55,20 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     }
 
     useEffect(() => {
-        fieldDesc.length && fieldName.length ? setEnableOk(true) : setEnableOk(false);
+        console.log(coursesCodes);
 
-    }, [fieldDesc, fieldName])
+        if (identifier == "course") {
+            if (!coursesCodes.includes(fieldName.toUpperCase())) {
+                setWarning(false);
+                setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
+            } else {
+                setWarning(true);
+                setEnableOk(false);
+            }
+        } else {
+            setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
+        }
+    }, [fieldDesc, fieldName, coursesCodes, identifier]);
 
     useEffect(() => {
         console.log(techDiff);
@@ -86,7 +99,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
             } as Technology;
         } else if (identifier == "course") {
             sendJSON = {
-                "code": fieldName,
+                "code": fieldName.toUpperCase(),
                 "name": fieldDesc
             } as Course;
         } else {
@@ -170,6 +183,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
                             <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
+                            <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code is not valid</span>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Description</label>
@@ -210,6 +224,17 @@ export default function Add({ technologies, courses }: { technologies: Technolog
 
         return difficultyArray;
 
+    }
+
+    function getCoursesCodes(): string[] {
+        let coursesCodes: string[] = [];
+
+        courses.forEach((course: Course) => {
+            coursesCodes.push(course.code);
+        })
+
+
+        return coursesCodes;
     }
 }
 
