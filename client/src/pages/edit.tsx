@@ -15,12 +15,6 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
 
 
     //state variables for technology
-    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
-    const [enableOk, setEnableOk] = useState<boolean>(false);
-    const [fieldName, setfieldName] = useState<string>("");
-    const [fieldDesc, setfieldDesc] = useState<string>("");
-    const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
-    const [warning, setWarning] = useState<boolean>(false);
 
     const [selectedTech, setSelectedTech] = useState<Technology>(
         technologies.find((tech) => tech._id == selected) as Technology
@@ -29,6 +23,17 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         courses.find((course) => course._id == selected) as Course
     );
 
+    const [enableOk, setEnableOk] = useState<boolean>(false);
+    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
+
+    const [fieldName, setfieldName] = useState<string>(
+        identifier == "tech" ? selectedTech.name : selectedCourse.code
+    );
+    const [fieldDesc, setfieldDesc] = useState<string>(
+        identifier == "tech" ? selectedTech.description : selectedCourse.name
+    );
+    const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
+    const [warning, setWarning] = useState<boolean>(false);
 
     const technologyCourses: string[] = selectedTech.courses.map(course => course.code);
 
