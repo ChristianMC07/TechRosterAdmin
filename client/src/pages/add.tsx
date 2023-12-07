@@ -11,21 +11,24 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     const identifier: string | string[] = router.query.identifier!;
     const difficultyArray: number[] = getDifficulty();
 
-    //state variables
+    //state variables for technology
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
     const [enableOk, setEnableOk] = useState<boolean>(false);
-    const [techName, setTechName] = useState<string>("");
-    const [techDesc, setTechDesc] = useState<string>("");
+    const [fieldName, setfieldName] = useState<string>("");
+    const [fieldDesc, setfieldDesc] = useState<string>("");
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
+
+    //state variables for course
+
 
 
 
     const onNameChange = (e: any) => {
-        setTechName(e.target.value);
+        setfieldName(e.target.value);
     }
 
     const onDescriptionChange = (e: any) => {
-        setTechDesc(e.target.value);
+        setfieldDesc(e.target.value);
     }
 
     const onCourseChange = (code: string, name: string) => {
@@ -50,9 +53,9 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     }
 
     useEffect(() => {
-        techDesc.length && techName.length ? setEnableOk(true) : setEnableOk(false);
+        fieldDesc.length && fieldName.length ? setEnableOk(true) : setEnableOk(false);
 
-    }, [techDesc, techName])
+    }, [fieldDesc, fieldName])
 
     useEffect(() => {
         console.log(techDiff);
@@ -60,20 +63,34 @@ export default function Add({ technologies, courses }: { technologies: Technolog
     }, [techDiff])
 
     useEffect(() => {
-        console.log(techName)
-    }, [techName])
+        console.log(fieldName)
+    }, [fieldName])
 
     useEffect(() => {
-        console.log(techDesc)
-    }, [techDesc])
+        console.log(fieldDesc)
+    }, [fieldDesc])
 
 
     const onSubmit = () => {
-        let sendJSON: Technology = {
-            "name": techName,
-            "description": techDesc,
-            "difficulty": techDiff,
-            "courses": selectedCourses
+
+        let sendJSON: Technology | Course;
+
+
+        if (identifier == "tech") {
+
+            sendJSON = {
+                "name": fieldName,
+                "description": fieldDesc,
+                "difficulty": techDiff,
+                "courses": selectedCourses
+            } as Technology;
+        } else if (identifier == "course") {
+            sendJSON = {
+                "code": fieldName,
+                "name": fieldDesc
+            } as Course;
+        } else {
+            sendJSON = {} as Technology | Course;
         }
 
         // console.log(sendJSON);
@@ -147,8 +164,29 @@ export default function Add({ technologies, courses }: { technologies: Technolog
             )}
 
             {identifier == "course" && (
-                <div>
-                    <h1>Add New Course</h1>
+                <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
+                    <h1 className="text-2xl font-bold mb-4">Add New Course</h1>
+                    <form>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-600">Name</label>
+                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-600">Description</label>
+                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></textarea>
+                        </div>
+                        <div className="flex gap-10 mt-10">
+                            <input
+                                type="button"
+                                className={` text-white px-4 py-2 roundedfocus:outline-none  ${enableOk ? "bg-blue-500 hover:bg-blue-700 focus:shadow-outline-blue active:bg-blue-800 cursor-pointer" : "pointer-events-none bg-gray-500"}`}
+                                onClick={onSubmit}
+                                value="Ok" />
+                            <input type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800" value="Cancel" onClick={() => router.replace("/")} />
+                        </div>
+
+
+
+                    </form>
                 </div>
             )
             }
