@@ -27,10 +27,10 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
 
     const [fieldName, setfieldName] = useState<string>(
-        identifier == "tech" ? selectedTech.name : selectedCourse.code
+        identifier === "tech" ? (selectedTech.name.length > 0 ? selectedTech.name : "") : (selectedCourse.code.length > 0 ? selectedCourse.code : "")
     );
     const [fieldDesc, setfieldDesc] = useState<string>(
-        identifier == "tech" ? selectedTech.description : selectedCourse.name
+        identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
     );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
     const [warning, setWarning] = useState<boolean>(false);
@@ -145,11 +145,20 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} value={fieldName || selectedTech.name} />
+                            <input
+                                className="w-full border rounded px-3 py-2"
+                                onChange={onNameChange}
+                                value={fieldName}
+                            />
                         </div>
+
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Description</label>
-                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange} value={fieldDesc || selectedTech.description}></textarea>
+                            <textarea
+                                className="w-full border rounded px-3 py-2"
+                                onChange={onDescriptionChange}
+                                value={fieldDesc}
+                            ></textarea>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Difficulty</label>
