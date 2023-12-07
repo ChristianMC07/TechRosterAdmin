@@ -8,7 +8,8 @@ const URL_ADD: string = "http://localhost:3000/api/post";
 
 export default function Edit({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
     const router: NextRouter = useRouter();
-    const identifier: string | string[] = router.query.identifier!;
+    const identifier: string | string[] = router.query.editType!;
+    const selected: string | string[] = router.query.id!;
     const difficultyArray: number[] = getDifficulty();
     const coursesCodes: string[] = getCoursesCodes();
 
@@ -19,6 +20,13 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     const [fieldDesc, setfieldDesc] = useState<string>("");
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
     const [warning, setWarning] = useState<boolean>(false);
+
+    const [selectedTech, setSelectedTech] = useState<Technology>(
+        technologies.find((tech) => tech._id == selected) as Technology
+    );
+    const [selectedCourse, setSelectedCourse] = useState<Course>(
+        courses.find((course) => course._id == selected) as Course
+    );
 
 
 
@@ -124,7 +132,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         <div>
             {identifier == "tech" && (
                 <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
-                    <h1 className="text-2xl font-bold mb-4">Add New Technology</h1>
+                    <h1 className="text-2xl font-bold mb-4">Edit Technology</h1>
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
