@@ -181,13 +181,13 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                     <h1 className="text-2xl font-bold mb-4">Add New Course</h1>
                     <form>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-600">Name</label>
+                            <label className="block text-sm font-medium text-gray-600">Course Code</label>
                             <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
-                            <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code is not valid</span>
+                            <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code {fieldName} already exists</span>
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-600">Description</label>
-                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></textarea>
+                            <label className="block text-sm font-medium text-gray-600">Name:</label>
+                            <input className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></input>
                         </div>
                         <div className="flex gap-10 mt-10">
                             <input
