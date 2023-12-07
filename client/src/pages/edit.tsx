@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { NextRouter, useRouter } from "next/router";
 import { sendJSONData } from "@/tools/Toolkit";
 
-const URL_ADD: string = "http://localhost:3000/api/post";
+const URL_EDIT: string = `http://localhost:3000/api/put`;
 
 export default function Edit({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
     const router: NextRouter = useRouter();
@@ -12,6 +12,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     const selected: string | string[] = router.query.id!;
     const difficultyArray: number[] = getDifficulty();
     const coursesCodes: string[] = getCoursesCodes();
+
 
     //state variables for technology
     const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
@@ -29,6 +30,9 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     );
 
 
+    const technologyCourses: string[] = selectedTech.courses.map(course => course.code);
+
+
 
     const onNameChange = (e: any) => {
         setfieldName(e.target.value);
@@ -41,12 +45,12 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     const onCourseChange = (code: string, name: string) => {
         const isSelected = selectedCourses.some(course => course.code === code);
 
-        //remove if it is now unchecked
         if (isSelected) {
-            setSelectedCourses(selectedCourses.filter(course => course.code !== code));
-            //... shorthand for push
+            // Remove if it is now unchecked
+            setSelectedCourses(prevSelectedCourses => prevSelectedCourses.filter(course => course.code !== code));
         } else {
-            setSelectedCourses([...selectedCourses, { code, name }]);
+            // Add if it is checked
+            setSelectedCourses(prevSelectedCourses => [...prevSelectedCourses, { code, name }]);
         }
     };
 
@@ -113,7 +117,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
 
         // console.log(sendJSON);
 
-        sendJSONData(URL_ADD, sendJSON, addResponse, addError, true);
+        sendJSONData(URL_EDIT + `/${selected}`, sendJSON, addResponse, addError, true);
     }
 
     const addResponse = async (responseText: string) => {
@@ -136,23 +140,22 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
+                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} value={fieldName || selectedTech.name} />
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Description</label>
-                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></textarea>
+                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange} value={fieldDesc || selectedTech.description}></textarea>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Difficulty</label>
                             <select
                                 className="w-full border rounded px-3 py-2"
                                 onChange={onDiffChange}
-                                defaultValue={difficultyArray[0]}>
-                                {difficultyArray.map((difficulty, index) => (
-                                    <option key={index} value={difficulty}>
-                                        {difficulty}
-                                    </option>
-                                ))}
+                                defaultValue={selectedTech.difficulty}>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
                             </select>
                         </div>
                         <div className="mb-4">
@@ -162,7 +165,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                                     <input
                                         type="checkbox"
                                         className="mr-2"
-                                        checked={selectedCourses.some(selectedCourse => selectedCourse.code === course.code)}
+                                        checked={technologyCourses.includes(course.code)}
                                         onChange={() => onCourseChange(course.code, course.name)}
                                     />
                                     <span>{course.code} {course.name}</span>
