@@ -194,12 +194,26 @@ export async function deleteTechnology(request: NextApiRequest, response: NextAp
                 // delete document from courses collection
                 const courseResult: DeleteResult = await courseCollection.deleteOne({ _id: id });
                 if (courseResult.deletedCount > 0) {
+                    // Retrieve the associated code before sending the response
+                    const associatedCode = courseExists.code;
+
+                    // Now, perform the update operation on the technologies collection to remove the corresponding course
+                    const techCollection: Collection<Technology> = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
+                    const techUpdateQuery: Object = { "courses.code": associatedCode };
+                    const techUpdateValues: Object = { $pull: { "courses": { code: associatedCode } } };
+                    const techUpdateResult = await techCollection.updateMany(techUpdateQuery, techUpdateValues);
+
                     response.status(200);
-                    response.send(courseResult);
+                    response.send({
+                        deletedCount: courseResult.deletedCount,
+                        associatedCode,
+                        techUpdateCount: techUpdateResult.modifiedCount,
+                    });
                 } else {
                     response.status(500);
                     response.send({ error: "Failed to delete from courses collection" });
                 }
+
             } else {
                 response.status(404);
                 response.send({ error: "No documents found with the given ID" });
