@@ -131,6 +131,13 @@ export async function updateTechnology(request: NextApiRequest, response: NextAp
 
             result = await courseCollection.updateOne(selector, newValues);
 
+            // Now, update the corresponding technologies in the technologies collection
+            let techCollection: Collection = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
+            let techSelector: Object = { "courses.code": request.body.code };
+            let techNewValues: Object = { $set: { "courses.$.name": request.body.name } };
+
+            result = await techCollection.updateMany(techSelector, techNewValues);
+
 
             if (result.matchedCount <= 0) {
                 response.status(404);
@@ -142,9 +149,6 @@ export async function updateTechnology(request: NextApiRequest, response: NextAp
             }
 
         }
-
-
-
 
 
     } catch (error: any) {
