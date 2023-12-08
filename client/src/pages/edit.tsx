@@ -39,6 +39,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
     );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
+    const [warning, setWarning] = useState<boolean>(false);
 
 
     const onNameChange = (e: any) => {
@@ -77,9 +78,17 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         console.log(coursesCodes);
 
         if (identifier == "course") {
-            fieldDesc.length > 0 ? setEnableOk(true) : setEnableOk(false)
+            if (!coursesCodes.includes(fieldName.toUpperCase())) {
+                setWarning(false);
+                setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
+            } else {
+                setWarning(true);
+                setEnableOk(false);
+            }
+        } else {
+            setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
         }
-    }, [fieldDesc, coursesCodes, identifier]);
+    }, [fieldDesc, fieldName, coursesCodes, identifier]);
 
     useEffect(() => {
         console.log(techDiff);
