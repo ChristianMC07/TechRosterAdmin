@@ -12,6 +12,8 @@ export default function Home({ technologies, courses }: { technologies: Technolo
   const [identifier, setIdentifier] = useState<string | undefined>(undefined);
   const [editType, seteditType] = useState<string | undefined>(undefined);
   const [editId, setEditId] = useState<string | undefined>(undefined);
+  const [deleteType, setDeleteType] = useState<string | undefined>(undefined);
+  const [deleteId, setDeleteId] = useState<string | undefined>(undefined);
 
   const router: NextRouter = useRouter();
 
@@ -56,6 +58,32 @@ export default function Home({ technologies, courses }: { technologies: Technolo
     }
   }, [editType])
 
+  const deleteTech = (techId: string) => {
+    setDeleteType("tech");
+    setDeleteId(techId);
+  }
+
+  const deleteCourse = (courseId: string) => {
+    setDeleteType("course");
+    setDeleteId(courseId);
+  }
+
+  useEffect(() => {
+    if (deleteType !== undefined) {
+      router.push({
+        pathname: "/delete",
+        query: {
+          deleteType: deleteType,
+          id: deleteId
+        }
+      })
+    }
+
+  }, [deleteType])
+
+
+
+
 
   return (
     <div className="flex flex-wrap justify-around">
@@ -64,7 +92,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
         {techs.map((technoogy: Technology, n: number) =>
           <div className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faPenToSquare} onClick={() => editTech(technoogy._id!)} className="cursor-pointer" />
-            <FontAwesomeIcon icon={faTrash} onClick={() => router.push("/delete")} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faTrash} onClick={() => deleteTech(technoogy._id!)} className="cursor-pointer" />
             <div key={n} className="my-4">{technoogy.name}</div>
           </div>
         )}
@@ -75,7 +103,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
         {updCourses.map((course: Course, n: number) =>
           <div className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faPenToSquare} onClick={() => editCourse(course._id!)} className="cursor-pointer" />
-            <FontAwesomeIcon icon={faTrash} onClick={() => router.push("/delete")} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faTrash} onClick={() => deleteCourse(course._id!)} className="cursor-pointer" />
             <div key={n} className="my-4">{course.code} | {course.name}</div>
           </div>
         )}
