@@ -143,11 +143,10 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                                 className="w-full border rounded px-3 py-2"
                                 onChange={onDiffChange}
                                 defaultValue={difficultyArray[0]}>
-                                {difficultyArray.map((difficulty, index) => (
-                                    <option key={index} value={difficulty}>
-                                        {difficulty}
-                                    </option>
-                                ))}
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
                             </select>
                         </div>
                         <div className="mb-4">
