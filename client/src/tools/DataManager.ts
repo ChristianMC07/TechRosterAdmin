@@ -131,6 +131,16 @@ export async function updateTechnology(request: NextApiRequest, response: NextAp
 
             result = await courseCollection.updateOne(selector, newValues);
 
+
+            if (result.matchedCount <= 0) {
+                response.status(404);
+                response.send({ error: "No course documents found with ID" });
+            } else {
+                // status code for updated
+                response.status(200);
+                response.send(result);
+            }
+
         }
 
 
