@@ -10,6 +10,8 @@ export default function Home({ technologies, courses }: { technologies: Technolo
   const [techs, setTechs] = useState<Technology[]>(technologies);
   const [updCourses, setUpdCourses] = useState<Course[]>(courses);
   const [identifier, setIdentifier] = useState<string | undefined>(undefined);
+  const [editType, seteditType] = useState<string | undefined>(undefined);
+  const [editId, setEditId] = useState<string | undefined>(undefined);
 
   const router: NextRouter = useRouter();
 
@@ -31,6 +33,29 @@ export default function Home({ technologies, courses }: { technologies: Technolo
     }
   }, [identifier])
 
+  const editTech = (techId: string) => {
+    seteditType("tech");
+    setEditId(techId);
+
+  }
+
+  const editCourse = (courseId: string) => {
+    seteditType("course");
+    setEditId(courseId)
+  }
+
+  useEffect(() => {
+    if (editType !== undefined) {
+      router.push({
+        pathname: "/edit",
+        query: {
+          editType: editType,
+          id: editId
+        }
+      })
+    }
+  }, [editType])
+
 
   return (
     <div className="flex flex-wrap justify-around">
@@ -38,7 +63,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
         <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer" onClick={addNewTech} />
         {techs.map((technoogy: Technology, n: number) =>
           <div className="flex gap-2 items-center">
-            <FontAwesomeIcon icon={faPenToSquare} onClick={() => router.push("/edit")} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editTech(technoogy._id!)} className="cursor-pointer" />
             <FontAwesomeIcon icon={faTrash} onClick={() => router.push("/delete")} className="cursor-pointer" />
             <div key={n} className="my-4">{technoogy.name}</div>
           </div>
@@ -49,7 +74,7 @@ export default function Home({ technologies, courses }: { technologies: Technolo
         <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer" onClick={addNewCourse} />
         {updCourses.map((course: Course, n: number) =>
           <div className="flex gap-2 items-center">
-            <FontAwesomeIcon icon={faPenToSquare} onClick={() => router.push("/edit")} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editCourse(course._id!)} className="cursor-pointer" />
             <FontAwesomeIcon icon={faTrash} onClick={() => router.push("/delete")} className="cursor-pointer" />
             <div key={n} className="my-4">{course.code} | {course.name}</div>
           </div>

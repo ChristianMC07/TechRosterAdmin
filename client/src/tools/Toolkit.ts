@@ -49,10 +49,10 @@ async function getJSONData(retrieveScript: string, success?: Function, failure?:
     }
 }
 
-function sendJSONData(sendURL: string, sendJSON: any, success: Function, failure: Function, debug: boolean = false) {
+function sendJSONData(sendURL: string, sendJSON: any, success: Function, failure: Function, debug: boolean = false, method: string) {
     fetch(sendURL,
         {
-            method: "POST",
+            method: method,
             headers: { "content-type": "application/json" },
             body: JSON.stringify(sendJSON)
         })

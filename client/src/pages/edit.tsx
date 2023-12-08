@@ -1,28 +1,44 @@
 import { Technology, Course } from "./../tools/data.model";
 import { getAllData } from "../tools/DataManager";
+import { useEffect, useState } from "react";
 import { NextRouter, useRouter } from "next/router";
-import { useState, useEffect } from "react";
 import { sendJSONData } from "@/tools/Toolkit";
 
-const URL_ADD: string = "http://localhost:3000/api/post";
+const URL_EDIT: string = `http://localhost:3000/api/put`;
 
-export default function Add({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
+export default function Edit({ technologies, courses }: { technologies: Technology[], courses: Course[] }) {
     const router: NextRouter = useRouter();
-    const identifier: string | string[] = router.query.identifier!;
+    const identifier: string | string[] = router.query.editType!;
+    const selected: string | string[] = router.query.id!;
     const difficultyArray: number[] = getDifficulty();
     const coursesCodes: string[] = getCoursesCodes();
 
+
     //state variables for technology
-    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
+
+    const [selectedTech, setSelectedTech] = useState<Technology>(
+        technologies.find((tech) => tech._id == selected) as Technology
+    );
+    const [selectedCourse, setSelectedCourse] = useState<Course>(
+        courses.find((course) => course._id == selected) as Course
+    );
+
     const [enableOk, setEnableOk] = useState<boolean>(false);
-    const [fieldName, setfieldName] = useState<string>("");
-    const [fieldDesc, setfieldDesc] = useState<string>("");
+
+    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>(
+        (identifier === "tech" && selectedTech.courses.length > 0) ?
+            selectedTech.courses.map(course => ({ code: course.code, name: course.name })) :
+            (identifier === "course" && selectedCourse) ?
+                [{ code: selectedCourse.code, name: selectedCourse.name }] :
+                []
+    );
+    const [fieldName, setfieldName] = useState<string>(
+        identifier === "tech" ? (selectedTech.name.length > 0 ? selectedTech.name : "") : (selectedCourse.code.length > 0 ? selectedCourse.code : "")
+    );
+    const [fieldDesc, setfieldDesc] = useState<string>(
+        identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
+    );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
-    const [warning, setWarning] = useState<boolean>(false);
-
-    //state variables for course
-
-
 
 
     const onNameChange = (e: any) => {
@@ -33,15 +49,18 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         setfieldDesc(e.target.value);
     }
 
-    const onCourseChange = (code: string, name: string) => {
-        const isSelected = selectedCourses.some(course => course.code === code);
+    const onCourseChange = (checkingCode: string, name: string) => {
+        //tried .includes but includes doesn't accept callbacks
+        const isSelected = selectedCourses.some(course => course.code === checkingCode);
 
-        //remove if it is now unchecked
         if (isSelected) {
-            setSelectedCourses(selectedCourses.filter(course => course.code !== code));
-            //... shorthand for push
+            // Remove if it is now unchecked
+            setSelectedCourses(prevSelectedCourses =>
+                prevSelectedCourses.filter(course => course.code !== checkingCode)
+            );
         } else {
-            setSelectedCourses([...selectedCourses, { code, name }]);
+            // Add if it is checked
+            setSelectedCourses(prevSelectedCourses => [...prevSelectedCourses, { code: checkingCode, name }]);
         }
     };
 
@@ -58,13 +77,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         console.log(coursesCodes);
 
         if (identifier == "course") {
-            if (!coursesCodes.includes(fieldName.toUpperCase())) {
-                setWarning(false);
-                setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
-            } else {
-                setWarning(true);
-                setEnableOk(false);
-            }
+            setEnableOk(fieldDesc.length > 0)
         } else {
             setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
         }
@@ -108,7 +121,8 @@ export default function Add({ technologies, courses }: { technologies: Technolog
 
         // console.log(sendJSON);
 
-        sendJSONData(URL_ADD, sendJSON, addResponse, addError, true, "POST");
+        sendJSONData(`${URL_EDIT}/${selected}`, sendJSON, addResponse, addError, true, "PUT");
+        console.log(`${URL_EDIT}/${selected}`);
     }
 
     const addResponse = async (responseText: string) => {
@@ -127,22 +141,31 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         <div>
             {identifier == "tech" && (
                 <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
-                    <h1 className="text-2xl font-bold mb-4">Add New Technology</h1>
-                    <form>
+                    <h1 className="text-2xl font-bold mb-4">Edit Technology</h1>
+                    <form method="PUT">
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
+                            <input
+                                className="w-full border rounded px-3 py-2"
+                                onChange={onNameChange}
+                                value={fieldName}
+                            />
                         </div>
+
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Description</label>
-                            <textarea className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></textarea>
+                            <textarea
+                                className="w-full border rounded px-3 py-2"
+                                onChange={onDescriptionChange}
+                                value={fieldDesc}
+                            ></textarea>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Difficulty</label>
                             <select
                                 className="w-full border rounded px-3 py-2"
                                 onChange={onDiffChange}
-                                defaultValue={difficultyArray[0]}>
+                                defaultValue={selectedTech.difficulty}>
                                 <option>1</option>
                                 <option>2</option>
                                 <option>3</option>
@@ -181,12 +204,22 @@ export default function Add({ technologies, courses }: { technologies: Technolog
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Course Code</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
-                            <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code {fieldName} already exists</span>
+                            <input
+                                className="w-full border rounded px-3 py-2 text-gray-400"
+                                onChange={onNameChange}
+                                value={fieldName}
+                                style={{ userSelect: 'none' }}
+                                disabled={true}
+                            />
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name:</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></input>
+                            <input className="w-full border rounded px-3 py-2"
+                                type="text"
+                                onChange={onDescriptionChange}
+                                value={fieldDesc}
+
+                            />
                         </div>
                         <div className="flex gap-10 mt-10">
                             <input
@@ -236,7 +269,6 @@ export default function Add({ technologies, courses }: { technologies: Technolog
         return coursesCodes;
     }
 }
-
 
 export async function getServerSideProps() {
 
