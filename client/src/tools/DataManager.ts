@@ -160,6 +160,7 @@ export async function updateTechnology(request: NextApiRequest, response: NextAp
     }
 }
 
+
 export async function deleteTechnology(request: NextApiRequest, response: NextApiResponse<any>) {
     let mongoClient: MongoClient = new MongoClient(MONGO_URL);
     try {
@@ -170,19 +171,39 @@ export async function deleteTechnology(request: NextApiRequest, response: NextAp
         // sanitize it and convert to ObjectId
         id = new ObjectId(sanitizeHtml(id));
 
-        // delete document
-        let techCollection: Collection = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
-        let selector: Object = { "_id": id };
-        let result: DeleteResult = await techCollection.deleteOne(selector);
+        // check if the id exists in technologies collection
+        const techCollection: Collection<Technology> = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
+        const techExists = await techCollection.findOne({ _id: id });
 
-        // check if deleted correctly
-        if (result.deletedCount <= 0) {
-            response.status(404);
-            response.send({ error: "No technology documents found with ID" });
+        if (techExists) {
+            // delete document from technologies collection
+            const techResult: DeleteResult = await techCollection.deleteOne({ _id: id });
+            if (techResult.deletedCount > 0) {
+                response.status(200);
+                response.send(techResult);
+            } else {
+                response.status(500);
+                response.send({ error: "Failed to delete from technologies collection" });
+            }
         } else {
-            // status code for deleted
-            response.status(200);
-            response.send(result);
+            // check if the id exists in courses collection
+            const courseCollection: Collection<Course> = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_COURSES);
+            const courseExists = await courseCollection.findOne({ _id: id });
+
+            if (courseExists) {
+                // delete document from courses collection
+                const courseResult: DeleteResult = await courseCollection.deleteOne({ _id: id });
+                if (courseResult.deletedCount > 0) {
+                    response.status(200);
+                    response.send(courseResult);
+                } else {
+                    response.status(500);
+                    response.send({ error: "Failed to delete from courses collection" });
+                }
+            } else {
+                response.status(404);
+                response.send({ error: "No documents found with the given ID" });
+            }
         }
     } catch (error: any) {
         response.status(500);
