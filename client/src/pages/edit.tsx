@@ -39,7 +39,6 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
     );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
-    const [warning, setWarning] = useState<boolean>(false);
 
 
     const onNameChange = (e: any) => {
@@ -78,13 +77,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         console.log(coursesCodes);
 
         if (identifier == "course") {
-            if (!coursesCodes.includes(fieldName.toUpperCase())) {
-                setWarning(false);
-                setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
-            } else {
-                setWarning(true);
-                setEnableOk(false);
-            }
+            setEnableOk(fieldDesc.length > 0)
         } else {
             setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
         }
@@ -129,7 +122,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         // console.log(sendJSON);
 
         sendJSONData(`${URL_EDIT}/${selected}`, sendJSON, addResponse, addError, true, "PUT");
-        console.log(URL_EDIT + "?" + selected);
+        console.log(`${URL_EDIT}/${selected}`);
     }
 
     const addResponse = async (responseText: string) => {
