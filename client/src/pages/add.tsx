@@ -108,7 +108,7 @@ export default function Add({ technologies, courses }: { technologies: Technolog
 
         // console.log(sendJSON);
 
-        sendJSONData(URL_ADD, sendJSON, addResponse, addError, true);
+        sendJSONData(URL_ADD, sendJSON, addResponse, addError, true, "POST");
     }
 
     const addResponse = async (responseText: string) => {
