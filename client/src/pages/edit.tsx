@@ -39,7 +39,6 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
     );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
-    const [warning, setWarning] = useState<boolean>(false);
 
 
     const onNameChange = (e: any) => {
@@ -78,17 +77,9 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         console.log(coursesCodes);
 
         if (identifier == "course") {
-            if (!coursesCodes.includes(fieldName.toUpperCase())) {
-                setWarning(false);
-                setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
-            } else {
-                setWarning(true);
-                setEnableOk(false);
-            }
-        } else {
-            setEnableOk(fieldDesc.length > 0 && fieldName.length > 0);
+            fieldDesc.length > 0 ? setEnableOk(true) : setEnableOk(false)
         }
-    }, [fieldDesc, fieldName, coursesCodes, identifier]);
+    }, [fieldDesc, coursesCodes, identifier]);
 
     useEffect(() => {
         console.log(techDiff);
@@ -218,7 +209,6 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                                 style={{ userSelect: 'none' }}
                                 disabled={true}
                             />
-                            <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code {fieldName} already exists</span>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name:</label>
