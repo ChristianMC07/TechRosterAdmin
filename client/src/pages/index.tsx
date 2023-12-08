@@ -87,23 +87,23 @@ export default function Home({ technologies, courses }: { technologies: Technolo
 
   return (
     <div className="flex flex-wrap justify-around">
-      <div>
-        <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer" onClick={addNewTech} />
+      <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
+        <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer text-slate-500 hover:text-slate-600" onClick={addNewTech} />
         {techs.map((technoogy: Technology, n: number) =>
           <div className="flex gap-2 items-center">
-            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editTech(technoogy._id!)} className="cursor-pointer" />
-            <FontAwesomeIcon icon={faTrash} onClick={() => deleteTech(technoogy._id!)} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editTech(technoogy._id!)} className="cursor-pointer text-blue-500 hover:text-blue-400" />
+            <FontAwesomeIcon icon={faTrash} onClick={() => deleteTech(technoogy._id!)} className="cursor-pointer text-red-700 hover:text-red-500" />
             <div key={n} className="my-4">{technoogy.name}</div>
           </div>
         )}
 
       </div>
-      <div>
-        <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer" onClick={addNewCourse} />
+      <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
+        <FontAwesomeIcon icon={faSquarePlus} className="text-xl cursor-pointer text-slate-500 hover:text-slate-600" onClick={addNewCourse} />
         {updCourses.map((course: Course, n: number) =>
           <div className="flex gap-2 items-center">
-            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editCourse(course._id!)} className="cursor-pointer" />
-            <FontAwesomeIcon icon={faTrash} onClick={() => deleteCourse(course._id!)} className="cursor-pointer" />
+            <FontAwesomeIcon icon={faPenToSquare} onClick={() => editCourse(course._id!)} className="cursor-pointer text-blue-500 hover:text-blue-400" />
+            <FontAwesomeIcon icon={faTrash} onClick={() => deleteCourse(course._id!)} className="cursor-pointer  text-red-700 hover:text-red-500" />
             <div key={n} className="my-4">{course.code} | {course.name}</div>
           </div>
         )}
