@@ -211,12 +211,23 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                     <form>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Course Code</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onNameChange} />
+                            <input
+                                className="w-full border rounded px-3 py-2 text-gray-400"
+                                onChange={onNameChange}
+                                value={fieldName}
+                                style={{ userSelect: 'none' }}
+                                disabled={true}
+                            />
                             <span className={`text-red-600 text-lg ${warning ? "block" : "hidden"}`}>The code {fieldName} already exists</span>
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name:</label>
-                            <input className="w-full border rounded px-3 py-2" onChange={onDescriptionChange}></input>
+                            <input className="w-full border rounded px-3 py-2"
+                                type="text"
+                                onChange={onDescriptionChange}
+                                value={fieldDesc}
+
+                            />
                         </div>
                         <div className="flex gap-10 mt-10">
                             <input
