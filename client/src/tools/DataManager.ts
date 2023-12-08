@@ -88,34 +88,54 @@ export async function updateTechnology(request: NextApiRequest, response: NextAp
     let mongoClient: MongoClient = new MongoClient(MONGO_URL);
     try {
         await mongoClient.connect();
+        let result: UpdateResult;
 
         let id: any = request.query.id;
         // sanitize it and convert to ObjectId
         id = new ObjectId(sanitizeHtml(id));
 
-        // sanitizing input
-        request.body.name = sanitizeHtml(request.body.name);
-        request.body.description = sanitizeHtml(request.body.description);
-        request.body.difficulty = sanitizeHtml(request.body.difficulty);
-        request.body.courses.forEach((course: Course) => {
-            course.code = sanitizeHtml(course.code);
-            course.name = sanitizeHtml(course.name);
-        });
+        if ("courses" in request.body) {
 
-        // update document
-        let techCollection: Collection = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
-        let selector: Object = { "_id": id };
-        let newValues: Object = { $set: request.body };
-        let result: UpdateResult = await techCollection.updateOne(selector, newValues);
+            // sanitizing input
+            request.body.name = sanitizeHtml(request.body.name);
+            request.body.description = sanitizeHtml(request.body.description);
+            request.body.difficulty = sanitizeHtml(request.body.difficulty);
+            request.body.courses.forEach((course: Course) => {
+                course.code = sanitizeHtml(course.code);
+                course.name = sanitizeHtml(course.name);
+            });
 
-        if (result.matchedCount <= 0) {
-            response.status(404);
-            response.send({ error: "No technology documents found with ID" });
+
+            // update document
+            let techCollection: Collection = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_TECHS);
+            let selector: Object = { "_id": id };
+            let newValues: Object = { $set: request.body };
+            result = await techCollection.updateOne(selector, newValues);
+
+            if (result.matchedCount <= 0) {
+                response.status(404);
+                response.send({ error: "No technology documents found with ID" });
+            } else {
+                // status code for updated
+                response.status(200);
+                response.send(result);
+            }
         } else {
-            // status code for updated
-            response.status(200);
-            response.send(result);
+            request.body.code = sanitizeHtml(request.body.code);
+            request.body.name = sanitizeHtml(request.body.name);
+
+            //update document
+            let courseCollection: Collection = mongoClient.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_COURSES);
+            let selector: Object = { "_id": id };
+            let newValues: Object = { $set: request.body };
+
+            result = await courseCollection.updateOne(selector, newValues);
+
         }
+
+
+
+
 
     } catch (error: any) {
         response.status(500);
