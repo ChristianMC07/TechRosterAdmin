@@ -64,4 +64,17 @@ function sendJSONData(sendURL: string, sendJSON: any, success: Function, failure
         });
 }
 
-export { getRandom, addKey, getJSONData, sendJSONData };
+function sendJSONDataDelete(sendURL: string, success: Function, failure: Function, debug: boolean = false) {
+    fetch(sendURL, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+    })
+        .then((response: Response) => response.text())
+        .then((responseText: string) => success(responseText))
+        .catch((error: Error) => {
+            failure(error);
+            if (debug) throw error;
+        });
+}
+
+export { getRandom, addKey, getJSONData, sendJSONData, sendJSONDataDelete };
