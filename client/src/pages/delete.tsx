@@ -56,7 +56,7 @@ export default function Delete({ technologies, courses }: { technologies: Techno
                     <div className="flex gap-10 mt-10">
                         <input
                             type="button"
-                            className={` text-white px-4 py-2 roundedfocus:outline-none bg-red-500 hover:bg-red-700 focus:shadow-outline-blue active:bg-blue-800 cursor-pointer`}
+                            className={` text-white px-4 py-2 roundedfocus:outline-none bg-red-500 hover:bg-red-700 focus:shadow-outline-blue cursor-pointer`}
                             onClick={onSubmit}
                             value="Ok" />
                         <input type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800" value="Cancel" onClick={() => router.replace("/")} />
@@ -77,7 +77,7 @@ export default function Delete({ technologies, courses }: { technologies: Techno
                     <div className="flex gap-10 mt-10">
                         <input
                             type="button"
-                            className={` text-white px-4 py-2 roundedfocus:outline-none bg-blue-500 hover:bg-blue-700 focus:shadow-outline-blue active:bg-blue-800 cursor-pointer`}
+                            className={` text-white px-4 py-2 roundedfocus:outline-none bg-red-500 hover:bg-red-700 focus:shadow-outline-blue cursor-pointer`}
                             onClick={onSubmit}
                             value="Ok" />
                         <input type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 focus:outline-none focus:shadow-outline-gray active:bg-gray-800" value="Cancel" onClick={() => router.replace("/")} />
