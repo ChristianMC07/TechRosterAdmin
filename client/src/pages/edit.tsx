@@ -24,8 +24,14 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     );
 
     const [enableOk, setEnableOk] = useState<boolean>(false);
-    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>([]);
 
+    const [selectedCourses, setSelectedCourses] = useState<{ code: string; name: string }[]>(
+        (identifier === "tech" && selectedTech.courses.length > 0) ?
+            selectedTech.courses.map(course => ({ code: course.code, name: course.name })) :
+            (identifier === "course" && selectedCourse) ?
+                [{ code: selectedCourse.code, name: selectedCourse.name }] :
+                []
+    );
     const [fieldName, setfieldName] = useState<string>(
         identifier === "tech" ? (selectedTech.name.length > 0 ? selectedTech.name : "") : (selectedCourse.code.length > 0 ? selectedCourse.code : "")
     );
@@ -34,9 +40,6 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
     );
     const [techDiff, setTechDiff] = useState<number>(difficultyArray[0]);
     const [warning, setWarning] = useState<boolean>(false);
-
-    const technologyCourses: string[] = selectedTech.courses.map(course => course.code);
-
 
 
     const onNameChange = (e: any) => {
@@ -47,15 +50,18 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
         setfieldDesc(e.target.value);
     }
 
-    const onCourseChange = (code: string, name: string) => {
-        const isSelected = selectedCourses.some(course => course.code === code);
+    const onCourseChange = (checkingCode: string, name: string) => {
+        //tried .includes but includes doesn't accept callbacks
+        const isSelected = selectedCourses.some(course => course.code === checkingCode);
 
         if (isSelected) {
             // Remove if it is now unchecked
-            setSelectedCourses(prevSelectedCourses => prevSelectedCourses.filter(course => course.code !== code));
+            setSelectedCourses(prevSelectedCourses =>
+                prevSelectedCourses.filter(course => course.code !== checkingCode)
+            );
         } else {
             // Add if it is checked
-            setSelectedCourses(prevSelectedCourses => [...prevSelectedCourses, { code, name }]);
+            setSelectedCourses(prevSelectedCourses => [...prevSelectedCourses, { code: checkingCode, name }]);
         }
     };
 
@@ -122,7 +128,8 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
 
         // console.log(sendJSON);
 
-        sendJSONData(URL_EDIT + `/${selected}`, sendJSON, addResponse, addError, true);
+        sendJSONData(`${URL_EDIT}/${selected}`, sendJSON, addResponse, addError, true, "PUT");
+        console.log(URL_EDIT + "?" + selected);
     }
 
     const addResponse = async (responseText: string) => {
@@ -142,7 +149,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
             {identifier == "tech" && (
                 <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
                     <h1 className="text-2xl font-bold mb-4">Edit Technology</h1>
-                    <form>
+                    <form method="PUT">
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600">Name</label>
                             <input
@@ -179,7 +186,7 @@ export default function Edit({ technologies, courses }: { technologies: Technolo
                                     <input
                                         type="checkbox"
                                         className="mr-2"
-                                        checked={technologyCourses.includes(course.code)}
+                                        checked={selectedCourses.some(selectedCourse => selectedCourse.code === course.code)}
                                         onChange={() => onCourseChange(course.code, course.name)}
                                     />
                                     <span>{course.code} {course.name}</span>
