@@ -24,6 +24,10 @@ export default function Delete({ technologies, courses }: { technologies: Techno
         identifier === "tech" ? (selectedTech.name.length > 0 ? selectedTech.name : "") : (selectedCourse.code.length > 0 ? selectedCourse.code : "")
     );
 
+    const [fieldDesc, setfieldDesc] = useState<string>(
+        identifier == "tech" ? selectedTech.description : (identifier == "course" ? selectedCourse.name : "")
+    );
+
 
 
     const onSubmit = () => {
@@ -68,7 +72,7 @@ export default function Delete({ technologies, courses }: { technologies: Techno
 
                 <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow-md">
                     <h1 className="text-2xl font-bold mb-4">Are you sure you want to delete the following Course?</h1>
-                    <h2></h2>
+                    <h2>{fieldName} {fieldDesc}</h2>
 
                     <div className="flex gap-10 mt-10">
                         <input
